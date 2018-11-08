@@ -34,9 +34,9 @@ def detect(im):
     left_lines = []
     right_lines = []
     
-    max_strips = 10
+    max_strips = 7
     
-    roi = im[int(im.shape[0] * 0.57):]
+    roi = im[int(im.shape[0] * 0.7):]
     filtered = cv2.GaussianBlur(roi, (5, 5), 0)
     edges = cv2.Canny(filtered, 100, 200)
     cv2.imshow('canny', edges)

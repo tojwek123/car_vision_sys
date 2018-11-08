@@ -22,10 +22,22 @@ def main():
         for line in right_lines:
 #             print(line)
             cv2.line(frame, line[0], line[1], (0, 0, 255), 3)
-                
+        
+        road_poly = []
+        
+        for line in right_lines:
+            road_poly.append(line[1])
+            road_poly.append(line[0])
+            
+        for line in reversed(left_lines):
+            road_poly.append(line[0])
+            road_poly.append(line[1])
+        
+        if len(road_poly) > 0:
+            cv2.fillConvexPoly(frame, np.asarray(road_poly), (0, 255, 0))
+                           
         cv2.imshow('frame', frame)
         cv2.waitKey(1)
-        
         
 #     orig = cv2.resize(orig, (0, 0), fx=0.5, fy=0.5)
     
