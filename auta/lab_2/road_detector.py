@@ -31,18 +31,20 @@ def _hough_line_to_slope_form(rho, theta):
     return (A, B)
 
 def detect(im):
-    detected_lines = []
+    left_lines = []
+    right_lines = []
     
-    max_strips = 7
+    max_strips = 10
     
-    roi = im[int(im.shape[0] * 0.55):]
+    roi = im[int(im.shape[0] * 0.57):]
     filtered = cv2.GaussianBlur(roi, (5, 5), 0)
     edges = cv2.Canny(filtered, 100, 200)
     cv2.imshow('canny', edges)
     
     for i in range(max_strips):
         strip = _get_im_strip(edges, i, max_strips)
-        hough_lines = cv2.HoughLines(strip,1,np.pi/180,20)
+        hough_lines = cv2.HoughLines(strip,1,np.pi/180,13)
+        current_strip_lines = []
          
         if hough_lines is not None:    
             for line in hough_lines:
@@ -65,9 +67,34 @@ def detect(im):
                         start = (int(x_start), int(y_start))
                         end = (int(x_end), int(y_end))
                         
-                        detected_lines.append((start, end))
+                        current_strip_lines.append((start, end))
                         
-    return detected_lines
+        left_line, right_line = None, None
+        center_width = 1.1 * (im.shape[1] / 2.0)
+        
+        for line in current_strip_lines:
+            if line[0][0] < center_width:
+                if left_line == None:
+                    left_line = line
+                elif line[0][0] > left_line[0][0]:
+                    left_line = line
+            if line[0][0] > center_width:
+                if right_line == None:
+                    right_line = line
+                elif line[0][0] < right_line[0][0]:
+                    right_line = line
+        
+        if left_line != None:
+            if len(left_lines) > 0:
+                left_line = (left_line[0], (left_lines[-1][0][0], left_line[1][1]))
+            left_lines.append(left_line)
+        if right_line != None:
+            if len(right_lines) > 0:
+                right_line = (right_line[0], (right_lines[-1][0][0], right_line[1][1]))
+            right_lines.append(right_line)
+    
+                        
+    return left_lines[:-1], right_lines[:-1]
     
 #     for i in range(max_strips):
 #         new_left_line = None

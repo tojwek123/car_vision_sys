@@ -12,13 +12,20 @@ def main():
     while True:
         _, frame = cap.read()
         
-        detected_lines = road_detector.detect(frame)
+        left_lines, right_lines = road_detector.detect(frame)
                 
-        for line in detected_lines:
-            cv2.line(frame, line[0], line[1], (255, 0, 0), 2)
+        for line in left_lines:
+#             print(line)
+            cv2.line(frame, line[0], line[1], (255, 0, 0), 3)
+            
+            
+        for line in right_lines:
+#             print(line)
+            cv2.line(frame, line[0], line[1], (0, 0, 255), 3)
                 
         cv2.imshow('frame', frame)
         cv2.waitKey(1)
+        
         
 #     orig = cv2.resize(orig, (0, 0), fx=0.5, fy=0.5)
     
