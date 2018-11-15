@@ -39,7 +39,6 @@ def detect(im):
     roi = im[int(im.shape[0] * 0.7):]
     filtered = cv2.GaussianBlur(roi, (5, 5), 0)
     edges = cv2.Canny(filtered, 100, 200)
-    cv2.imshow('canny', edges)
     
     for i in range(max_strips):
         strip = _get_im_strip(edges, i, max_strips)
